@@ -1,5 +1,7 @@
 {
     "debug": true,
     "devtoken": "",
-    "prodtoken": ""
+    "prodtoken": "",
+    "activeserver": 0,
+    "activechannel": 0
 }
