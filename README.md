@@ -4,12 +4,13 @@ TheVoid is a hasty thrown together discord bot experiment to see if its possible
 
 You are welcome to use this code as you see fit. Just copy the config_example.json as config.json and install the requirements.txt
 
-# Install
+# Install and run
 
 ```bash
 $ python -m venv venv
 $ source venv/bin/activate
 $ pip install -r requirements.txt
+$ python app.py
 ```
 
 # Join the discord
