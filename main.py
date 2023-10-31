@@ -1,4 +1,5 @@
 import asyncio
+import logging
 import sys
 import traceback
 import weakref
@@ -11,6 +12,10 @@ from discord import app_commands
 from embed import Embed
 from messages.models import Users, Messages, db
 
+
+logger = logging.getLogger('discord')
+logger.name = "discord.main"
+logger.setLevel(logging.INFO)
 
 class Client(discord.Client):
     _instances = set()
@@ -60,17 +65,17 @@ class Client(discord.Client):
         self.channel = self.get_channel(self.__bot_config["activechannel"])
         if not self.channel:
             sys.exit(1)
-        print("got channel")
+        logger.info("got channel")
         self.server = self.get_guild(self.__bot_config["activeserver"])
         if not self.server:
             sys.exit(1)
-        print("got server")
+        logger.info("got server")
         if not self._current_loop:
             self._current_loop = asyncio.get_running_loop()
-            print("got loop")
+            logger.info("got loop")
         if not self._runner:
             self._runner = self._current_loop.create_task(self.__run_churn())
-            print("running churn")
+            logger.info("running churn")
 
         await self.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name="Direct messages to send to the void."))
 
@@ -103,8 +108,8 @@ class Client(discord.Client):
 
 
                 except Exception as e:
-                    print(e)
-                    print(f"{traceback.format_exc()}")
+                    logger.info(e)
+                    logger.info(f"{traceback.format_exc()}")
                     self.message_queue.insert(0, message)
                     backoff = backoff + 0.5
 
