@@ -22,13 +22,20 @@ class CommandGroupAdmin(app_commands.Group):
                 reason = "No reason given."
             if action == "Warn":
                 await user.send(f"A post of yours has been removed. This is only a warning. Reason given - {reason}")
+                status = "user successfully warned"
             elif action == "Kick":
-                await user.kick(reason=reason)
+                await client.server.kick(reason=reason)
+                status = "user successfully kicked"
             elif action == "Ban":
-                await user.ban(reason=reason)
+                await client.server.ban(user, reason=reason)
+                status = "user successfully banned"
 
-        except Exception:
+        except (discord.NotFound, discord.Forbidden, discord.HTTPException) as e:
+            status = f"{e}"
+            pass
+        except Exception as e:
+            status = f"{e}"
             pass
 
         finally:
-            await interaction.response.send_message(f"k", ephemeral=True)
+            await interaction.response.send_message(f"{status}", ephemeral=True)
