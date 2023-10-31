@@ -13,9 +13,7 @@ $ pip install -r requirements.txt
 ```
 
 # Join the discord
-Come join the server [TheVoid][discord-thevoid-url]
+Come join the server [TheVoid](https://discord.gg/dAAh6mD9hu)
 
 # License
 Distributed under MIT License. See LICENSE file for more details.
-
-[discord-thevoid-url] <https://discord.gg/dAAh6mD9hu>
