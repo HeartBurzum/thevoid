@@ -63,16 +63,27 @@ class Client(discord.Client):
 
     async def on_connect(self) -> None:
         await self.wait_until_ready()
-        self.channel = self.get_channel(self.__bot_config["activechannel"])
+
+        try:
+            self.channel = self.get_channel(self.__bot_config["activechannel"])
+        except KeyError:
+            logger.critical("Failed to find activechannel in config. Exiting.")
+            sys.exit(1)
         if not self.channel:
             logger.critical(f"Failed to capture a channel. Exiting.")
             sys.exit(1)
         logger.info("got channel")
-        self.server = self.get_guild(self.__bot_config["activeserver"])
+
+        try:
+            self.server = self.get_guild(self.__bot_config["activeserver"])
+        except KeyError:
+            logger.critical("Failed to find activeserver in config. Exiting.")
+            sys.exit(1)
         if not self.server:
             logger.critical(f"Failed to capture a server. Exiting.")
             sys.exit(1)
         logger.info("got server")
+
         if not self._current_loop:
             self._current_loop = asyncio.get_running_loop()
             logger.info("got loop")
