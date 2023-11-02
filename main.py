@@ -1,3 +1,5 @@
+from typing import Any, Optional
+
 import asyncio
 import logging
 import sys
@@ -22,14 +24,14 @@ class Client(discord.Client):
     _instances = set()
 
     def __init__(self, **options) -> None:
-        self.__bot_config = options["config"]
+        self.__bot_config: dict[str, Any] = options["config"]
         super().__init__(**options)
 
-        self.message_queue: list[discord.Message|None] = list()
-        self._current_loop = None
-        self._runner = None
-        self.server = None
-        self.channel = None
+        self.message_queue: list[dict[str, Users|Messages|discord.Message]] = list()
+        self._current_loop: Optional[asyncio.AbstractEventLoop] = None
+        self._runner: Optional[asyncio.Task] = None
+        self.server: Optional[discord.Guild] = None
+        self.channel: Optional[discord.abc.GuildChannel] = None
         self.db = db
         self.db.bind([Users, Messages])
         self.db.create_tables([Users, Messages])
@@ -37,11 +39,11 @@ class Client(discord.Client):
         self._instances.add(weakref.ref(self))
 
     @property
-    def bot_config(self):
+    def bot_config(self) -> dict[str, Any]:
         return self.__bot_config
     
     @bot_config.setter
-    def bot_config(self):
+    def bot_config(self) -> None:
         raise NotImplementedError
     
     async def setup_hook(self) -> None:
@@ -55,10 +57,10 @@ class Client(discord.Client):
         if message.guild is None and not message.author.bot:
             if self.server.get_member(message.author.id) is not None:
                 try:
-                    user = Users.get(Users.discord_id == message.author.id)
+                    user: Users = Users.get(Users.discord_id == message.author.id)
                 except Users.DoesNotExist:
-                    user = Users.create(discord_id=message.author.id)
-                messagedb = Messages.create(uuid=str(uuid4())[:8], post_time=datetime.now(), user=user)
+                    user: Users = Users.create(discord_id=message.author.id)
+                messagedb: Messages = Messages.create(uuid=str(uuid4())[:8], post_time=datetime.now(), user=user)
                 self.message_queue.append({"user": user, "messagedb": messagedb, "message": message})
 
     async def on_connect(self) -> None:
@@ -93,8 +95,8 @@ class Client(discord.Client):
 
         await self.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name="Direct messages to send to the void."))
 
-    async def __run_churn(self):
-        backoff = 1
+    async def __run_churn(self) -> None:
+        backoff: float = 1.0
         while True:
             # delete message associations after 3 days - we assume the content
             # is fine if it hasn't been moderated
@@ -133,7 +135,7 @@ class Client(discord.Client):
                     backoff = backoff + 0.5
 
     @classmethod
-    def get_instances(cls):
+    def get_instances(cls) -> "Client":
         dead = set()
         for ref in cls._instances:
             obj = ref()

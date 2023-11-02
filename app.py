@@ -6,7 +6,7 @@ from discord import Intents
 from main import Client
 
 
-def main(config, client: Client) -> None:
+def main(config: dict[str, bool|str|int], client: Client) -> None:
 
 
     if config["debug"]:
@@ -19,7 +19,7 @@ def main(config, client: Client) -> None:
 if __name__ == "__main__":
     try:
         with open("config.json", "r") as config_file:
-            config = json.load(config_file)
+            config: dict[str, bool|str|int] = json.load(config_file)
     except FileNotFoundError:
         sys.exit(1)
     intents = Intents.all()
