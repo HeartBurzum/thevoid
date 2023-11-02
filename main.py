@@ -65,10 +65,12 @@ class Client(discord.Client):
         await self.wait_until_ready()
         self.channel = self.get_channel(self.__bot_config["activechannel"])
         if not self.channel:
+            logger.critical(f"Failed to capture a channel. Exiting.")
             sys.exit(1)
         logger.info("got channel")
         self.server = self.get_guild(self.__bot_config["activeserver"])
         if not self.server:
+            logger.critical(f"Failed to capture a server. Exiting.")
             sys.exit(1)
         logger.info("got server")
         if not self._current_loop:
