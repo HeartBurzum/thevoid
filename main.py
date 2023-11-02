@@ -4,6 +4,7 @@ import sys
 import traceback
 import weakref
 
+from datetime import datetime, timedelta
 from uuid import uuid4
 
 import discord
@@ -57,7 +58,7 @@ class Client(discord.Client):
                     user = Users.get(Users.discord_id == message.author.id)
                 except Users.DoesNotExist:
                     user = Users.create(discord_id=message.author.id)
-                messagedb = Messages.create(uuid=str(uuid4())[:8], user=user)
+                messagedb = Messages.create(uuid=str(uuid4())[:8], post_time=datetime.now(), user=user)
                 self.message_queue.append({"user": user, "messagedb": messagedb, "message": message})
 
     async def on_connect(self) -> None:
@@ -82,6 +83,11 @@ class Client(discord.Client):
     async def __run_churn(self):
         backoff = 1
         while True:
+            # delete message associations after 3 days - we assume the content
+            # is fine if it hasn't been moderated
+            dt = datetime.now() - timedelta(days=3)
+            q = Messages.delete().where(Messages.post_time < dt)
+            q.execute()
             await asyncio.sleep(backoff)
             if self.message_queue:
                 try:

@@ -3,7 +3,7 @@ import os
 import pathlib
 
 from playhouse.sqliteq import SqliteQueueDatabase
-from playhouse.sqlite_ext import CharField, ForeignKeyField, IntegerField, Model
+from playhouse.sqlite_ext import CharField, DateTimeField, ForeignKeyField, IntegerField, Model
 
 
 db = SqliteQueueDatabase(
@@ -29,6 +29,7 @@ class Users(Model):
 class Messages(Model):
     uuid = CharField(unique=True)
     discord_message_id = IntegerField(null=True)
+    post_time = DateTimeField(null=False)
     user = ForeignKeyField(Users, backref='messages')
 
     class Meta:
