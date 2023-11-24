@@ -3,15 +3,26 @@ import os
 import pathlib
 
 from playhouse.sqliteq import SqliteQueueDatabase
-from playhouse.sqlite_ext import CharField, DateTimeField, ForeignKeyField, IntegerField, Model
+from playhouse.sqlite_ext import (
+    CharField,
+    DateTimeField,
+    ForeignKeyField,
+    IntegerField,
+    Model,
+)
 
 
 db = SqliteQueueDatabase(
-    str(pathlib.Path(os.path.realpath(__file__)).parents[1].joinpath('databases', 'message_db.db')),
+    str(
+        pathlib.Path(os.path.realpath(__file__))
+        .parents[1]
+        .joinpath("databases", "message_db.db")
+    ),
     use_gevent=False,
     autostart=True,
     queue_max_size=64,
 )
+
 
 @atexit.register
 def __stop_worker_threads():
@@ -30,7 +41,7 @@ class Messages(Model):
     uuid = CharField(unique=True)
     discord_message_id = IntegerField(null=True)
     post_time = DateTimeField(null=False)
-    user = ForeignKeyField(Users, backref='messages')
+    user = ForeignKeyField(Users, backref="messages")
 
     class Meta:
         database = db

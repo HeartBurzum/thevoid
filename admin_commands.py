@@ -5,11 +5,18 @@ import discord
 from discord import app_commands
 
 from main import Client
-from messages.models import Users, Messages, db
+from messages.models import Messages
+
 
 class CommandGroupAdmin(app_commands.Group):
     @app_commands.command(name="moderateuser")
-    async def admin_moderate(self, interaction: discord.Interaction, action: Literal["Warn", "Kick", "Ban"], uuid: str, reason: Optional[str]) -> None:
+    async def admin_moderate(
+        self,
+        interaction: discord.Interaction,
+        action: Literal["Warn", "Kick", "Ban"],
+        uuid: str,
+        reason: Optional[str],
+    ) -> None:
         msg_db = Messages.get_or_none(uuid=uuid)
         for client in Client.get_instances():
             pass
@@ -21,7 +28,9 @@ class CommandGroupAdmin(app_commands.Group):
             if not reason:
                 reason = "No reason given."
             if action == "Warn":
-                await user.send(f"A post of yours has been removed. This is only a warning. Reason given - {reason}")
+                await user.send(
+                    f"A post of yours has been removed. This is only a warning. Reason given - {reason}"
+                )
                 status = "user successfully warned"
             elif action == "Kick":
                 await client.server.kick(reason=reason)
