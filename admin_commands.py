@@ -20,6 +20,11 @@ class CommandGroupAdmin(app_commands.Group):
         msg_db = Messages.get_or_none(uuid=uuid)
         for client in Client.get_instances():
             pass
+        if msg_db is None:
+            await interaction.response.send_message(
+                f"No message found with uuid {uuid}", ephemeral=True
+            )
+            return
         msg = await client.channel.fetch_message(int(msg_db.discord_message_id))
         await msg.delete()
         user = client.get_user(int(msg_db.user.discord_id))
