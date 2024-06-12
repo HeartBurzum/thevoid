@@ -1,4 +1,4 @@
-from typing import Any, Optional
+from typing import Any, Generator, Optional
 
 import asyncio
 import logging
@@ -153,7 +153,7 @@ class Client(discord.Client):
                     backoff = backoff + 0.5
 
     @classmethod
-    def get_instances(cls) -> "Client":
+    def get_instances(cls) -> Generator[Optional["Client"]]:
         dead = set()
         for ref in cls._instances:
             obj = ref()
