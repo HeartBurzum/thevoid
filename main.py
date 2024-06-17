@@ -153,7 +153,7 @@ class Client(discord.Client):
                     backoff = backoff + 0.5
 
     @classmethod
-    def get_instances(cls) -> Generator[Optional["Client"]]:
+    def get_instances(cls) -> Generator[Optional["Client"], None, None]:
         dead = set()
         for ref in cls._instances:
             obj = ref()
