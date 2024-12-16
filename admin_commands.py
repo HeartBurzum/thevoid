@@ -1,7 +1,6 @@
 from typing import Literal, Optional
 
 import discord
-
 from discord import app_commands
 
 from main import Client
@@ -40,7 +39,7 @@ class CommandGroupAdmin(app_commands.Group):
                     )
                     status = "user successfully warned"
                 case "Kick":
-                    await client.server.kick(reason=reason)
+                    await client.server.kick(user, reason=reason)
                     status = "user successfully kicked"
                 case "Ban":
                     await client.server.ban(user, reason=reason)
